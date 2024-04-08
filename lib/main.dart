@@ -1,14 +1,21 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:animate_do/animate_do.dart';
+import 'package:finance_tracker/authscreen/auth_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'authscreen/login.dart';
 import 'authscreen/signup.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: HomePage(),
@@ -68,7 +75,7 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => LoginPage()));
+                                  builder: (context) => Authpage()));
                         },
                         shape: RoundedRectangleBorder(
                             side: BorderSide(color: Colors.black),

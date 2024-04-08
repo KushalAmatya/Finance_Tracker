@@ -1,9 +1,53 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:animate_do/animate_do.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:finance_tracker/authscreen/signup.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
+
+  final passwordController = TextEditingController();
+
+  void signup() async {
+    showDialog(context: context, builder: (context) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    },
+    );
+    try {
+      
+      String email = emailController.text.toString().trim();
+      String pass = passwordController.text.toString().trim();
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email, password: pass);
+      Navigator.pop(context);
+    }on FirebaseAuthException catch(e)
+    {
+
+      if(e.code=='user-not-found')
+        {
+          print("no found");
+        }
+      else if(e.code=='wrong-password')
+        {
+          print("wrong password");
+        }
+    }
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,106 +74,124 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      FadeInUp(
-                          duration: Duration(milliseconds: 1000),
-                          child: Text(
-                            "Login",
-                            style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
-                          )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      FadeInUp(
-                          duration: Duration(milliseconds: 1200),
-                          child: Text(
-                            "Login to your account",
-                            style: TextStyle(
-                                fontSize: 15, color: Colors.grey[700]),
-                          )),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Column(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Column(
                       children: <Widget>[
                         FadeInUp(
-                            duration: Duration(milliseconds: 1200),
-                            child: makeInput(label: "Email")),
-                        FadeInUp(
-                            duration: Duration(milliseconds: 1300),
-                            child: makeInput(
-                                label: "Password", obscureText: true)),
-                      ],
-                    ),
-                  ),
-                  FadeInUp(
-                      duration: Duration(milliseconds: 1400),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: Container(
-                          padding: EdgeInsets.only(top: 3, left: 3),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border(
-                                bottom: BorderSide(color: Colors.black),
-                                top: BorderSide(color: Colors.black),
-                                left: BorderSide(color: Colors.black),
-                                right: BorderSide(color: Colors.black),
-                              )),
-                          child: MaterialButton(
-                            minWidth: double.infinity,
-                            height: 60,
-                            onPressed: () {},
-                            color: Color.fromRGBO(215, 178, 157, 1),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50)),
+                            duration: Duration(milliseconds: 1000),
                             child: Text(
                               "Login",
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 18),
+                                  fontSize: 30, fontWeight: FontWeight.bold),
+                            )),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        FadeInUp(
+                            duration: Duration(milliseconds: 1200),
+                            child: Text(
+                              "Login to your account",
+                              style: TextStyle(
+                                  fontSize: 15, color: Colors.grey[700]),
+                            )),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40),
+                      child: Column(
+                        children: <Widget>[
+                          FadeInUp(
+                            duration: Duration(milliseconds: 1200),
+                            child: makeInput(
+                                label: "Email", controller: emailController),
+                          ),
+                          FadeInUp(
+                              duration: Duration(milliseconds: 1300),
+                              child: makeInput(
+                                  label: "Password",
+                                  obscureText: true,
+                                  controller: passwordController)),
+                        ],
+                      ),
+                    ),
+                    FadeInUp(
+                        duration: Duration(milliseconds: 1400),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 40),
+                          child: Container(
+                            padding: EdgeInsets.only(top: 3, left: 3),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border(
+                                  bottom: BorderSide(color: Colors.black),
+                                  top: BorderSide(color: Colors.black),
+                                  left: BorderSide(color: Colors.black),
+                                  right: BorderSide(color: Colors.black),
+                                )),
+                            child: MaterialButton(
+                              minWidth: double.infinity,
+                              height: 60,
+                              onPressed: () {
+                                signup();
+                              },
+                              color: Color.fromRGBO(215, 178, 157, 1),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50)),
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 18),
+                              ),
                             ),
                           ),
-                        ),
-                      )),
-                  FadeInUp(
-                      duration: Duration(milliseconds: 1500),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text("Don't have an account?"),
-                          Text(
-                            "Sign up",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 18),
-                          ),
-                        ],
-                      ))
-                ],
+                        )),
+                    FadeInUp(
+                        duration: Duration(milliseconds: 1500),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text("Don't have an account?"),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignupPage()));
+                              },
+                              child: Text(
+                                "Sign up",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 18),
+                              ),
+                            ),
+                          ],
+                        )),
+                    FadeInUp(
+                        duration: Duration(milliseconds: 1200),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height / 3,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage('assets/background.png'),
+                                  fit: BoxFit.cover)),
+                        ))
+                  ],
+
+                ),
               ),
             ),
-            FadeInUp(
-                duration: Duration(milliseconds: 1200),
-                child: Container(
-                  height: MediaQuery.of(context).size.height / 3,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/background.png'),
-                          fit: BoxFit.cover)),
-                ))
+
           ],
         ),
       ),
     );
   }
 
-  Widget makeInput({label, obscureText = false}) {
+  Widget makeInput({label, obscureText = false, controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -142,6 +204,7 @@ class LoginPage extends StatelessWidget {
           height: 5,
         ),
         TextField(
+          controller: controller,
           obscureText: obscureText,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
