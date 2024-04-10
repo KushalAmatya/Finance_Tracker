@@ -1,10 +1,71 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:animate_do/animate_do.dart';
-import 'package:flutter/material.dart';
 
-class SignupPage extends StatelessWidget {
+import 'package:animate_do/animate_do.dart';
+import 'package:finance_tracker/authscreen/login.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
+
+
+class SignupPage extends StatefulWidget {
+  SignupPage({super.key});
   @override
+  State<SignupPage> createState() => _SignupPageState();
+}
+
+
+class _SignupPageState extends State<SignupPage> {
+
+
+  final emailController = TextEditingController();
+
+  final passwordController = TextEditingController();
+  final confirmpasswordController = TextEditingController();
+
+  void signup(BuildContext dialogcontext) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+    );
+
+
+    try {
+      String email = emailController.text.toString().trim();
+      String pass = passwordController.text.toString().trim();
+      String cpass=confirmpasswordController.text.toString().trim();
+
+      if(cpass==pass)
+        {
+          await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(email: email, password: pass);
+        }
+      else{
+
+        print("not matching");
+      }
+
+
+    }on FirebaseAuthException catch (e) {
+      print(e.code+"this is code");
+      print(e.message);
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'invalid-credential') {
+        print('Wrong password provided for that user.');
+      }
+    }
+     Navigator.pop(dialogcontext);
+  }
+  @override
+
+
+
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -55,14 +116,14 @@ class SignupPage extends StatelessWidget {
                 children: <Widget>[
                   FadeInUp(
                       duration: Duration(milliseconds: 1200),
-                      child: makeInput(label: "Email")),
+                      child: makeInput(label: "Email",controller: emailController)),
                   FadeInUp(
                       duration: Duration(milliseconds: 1300),
-                      child: makeInput(label: "Password", obscureText: true)),
+                      child: makeInput(label: "Password", obscureText: true,controller: passwordController)),
                   FadeInUp(
                       duration: Duration(milliseconds: 1400),
                       child: makeInput(
-                          label: "Confirm Password", obscureText: true)),
+                          label: "Confirm Password", obscureText: true,controller: confirmpasswordController)),
                 ],
               ),
               FadeInUp(
@@ -80,7 +141,9 @@ class SignupPage extends StatelessWidget {
                     child: MaterialButton(
                       minWidth: double.infinity,
                       height: 60,
-                      onPressed: () {},
+                      onPressed: () {
+                        signup(context);
+                      },
                       color: Color.fromRGBO(215, 178, 157, 1),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -98,10 +161,12 @@ class SignupPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text("Already have an account?"),
-                      Text(
-                        " Login",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 18),
+                      GestureDetector( onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()));
+                      },child: Text("Login"),
                       ),
                     ],
                   )),
@@ -112,7 +177,7 @@ class SignupPage extends StatelessWidget {
     );
   }
 
-  Widget makeInput({label, obscureText = false}) {
+  Widget makeInput({label, obscureText = false,controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -125,6 +190,7 @@ class SignupPage extends StatelessWidget {
           height: 5,
         ),
         TextField(
+          controller: controller,
           obscureText: obscureText,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),

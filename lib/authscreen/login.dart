@@ -18,34 +18,32 @@ class _LoginPageState extends State<LoginPage> {
 
   final passwordController = TextEditingController();
 
-  void signup() async {
-    showDialog(context: context, builder: (context) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    },
+  void signup(BuildContext dialogcontext) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
     );
+
     try {
-      
       String email = emailController.text.toString().trim();
       String pass = passwordController.text.toString().trim();
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email, password: pass);
-      Navigator.pop(context);
-    }on FirebaseAuthException catch(e)
-    {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: pass);
 
-      if(e.code=='user-not-found')
-        {
-          print("no found");
-        }
-      else if(e.code=='wrong-password')
-        {
-          print("wrong password");
-        }
+    }on FirebaseAuthException catch (e) {
+      print(e.code+"this is code");
+      print(e.message);
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'invalid-credential') {
+        print('Wrong password provided for that user.');
+      }
     }
-
-
+    Navigator.pop(dialogcontext);
   }
 
   @override
@@ -135,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                               minWidth: double.infinity,
                               height: 60,
                               onPressed: () {
-                                signup();
+                                signup(context);
                               },
                               color: Color.fromRGBO(215, 178, 157, 1),
                               elevation: 0,
@@ -156,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                           children: <Widget>[
                             Text("Don't have an account?"),
                             GestureDetector(
-                              onTap: (){
+                              onTap: () {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -180,11 +178,9 @@ class _LoginPageState extends State<LoginPage> {
                                   fit: BoxFit.cover)),
                         ))
                   ],
-
                 ),
               ),
             ),
-
           ],
         ),
       ),
