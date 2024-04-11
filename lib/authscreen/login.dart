@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:finance_tracker/authscreen/signup.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  final Function? toggleView;
+  LoginPage({super.key, this.toggleView});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -20,22 +21,20 @@ class _LoginPageState extends State<LoginPage> {
 
   void signup(BuildContext dialogcontext) async {
     showDialog(
-      context: context,
-      builder: (context) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-    );
+        context: context,
+        builder: (context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
 
     try {
       String email = emailController.text.toString().trim();
       String pass = passwordController.text.toString().trim();
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: pass);
-
-    }on FirebaseAuthException catch (e) {
-      print(e.code+"this is code");
+    } on FirebaseAuthException catch (e) {
+      print(e.code + "this is code");
       print(e.message);
       if (e.code == 'user-not-found') {
         print('No user found for that email.');

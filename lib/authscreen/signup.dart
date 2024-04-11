@@ -1,24 +1,22 @@
 // ignore_for_file: prefer_const_constructors
 
-
 import 'package:animate_do/animate_do.dart';
+import 'package:finance_tracker/Home.dart';
+import 'package:finance_tracker/authscreen/auth_page.dart';
 import 'package:finance_tracker/authscreen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 
-
 class SignupPage extends StatefulWidget {
-  SignupPage({super.key});
+  final Function? toggleView;
+  SignupPage({super.key, this.toggleView});
   @override
   State<SignupPage> createState() => _SignupPageState();
 }
 
-
 class _SignupPageState extends State<SignupPage> {
-
-
   final emailController = TextEditingController();
 
   final passwordController = TextEditingController();
@@ -31,28 +29,22 @@ class _SignupPageState extends State<SignupPage> {
           return Center(
             child: CircularProgressIndicator(),
           );
-        }
-    );
-
+        });
 
     try {
       String email = emailController.text.toString().trim();
       String pass = passwordController.text.toString().trim();
-      String cpass=confirmpasswordController.text.toString().trim();
+      String cpass = confirmpasswordController.text.toString().trim();
 
-      if(cpass==pass)
-        {
-          await FirebaseAuth.instance
-              .createUserWithEmailAndPassword(email: email, password: pass);
-        }
-      else{
-
+      if (cpass == pass) {
+        await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: pass);
+        //on sign up navigate to home page
+      } else {
         print("not matching");
       }
-
-
-    }on FirebaseAuthException catch (e) {
-      print(e.code+"this is code");
+    } on FirebaseAuthException catch (e) {
+      print(e.code + "this is code");
       print(e.message);
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
@@ -60,12 +52,13 @@ class _SignupPageState extends State<SignupPage> {
         print('Wrong password provided for that user.');
       }
     }
-     Navigator.pop(dialogcontext);
+    Navigator.pop(dialogcontext);
+    //open home page
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Authpage()));
   }
+
   @override
-
-
-
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -116,14 +109,20 @@ class _SignupPageState extends State<SignupPage> {
                 children: <Widget>[
                   FadeInUp(
                       duration: Duration(milliseconds: 1200),
-                      child: makeInput(label: "Email",controller: emailController)),
+                      child: makeInput(
+                          label: "Email", controller: emailController)),
                   FadeInUp(
                       duration: Duration(milliseconds: 1300),
-                      child: makeInput(label: "Password", obscureText: true,controller: passwordController)),
+                      child: makeInput(
+                          label: "Password",
+                          obscureText: true,
+                          controller: passwordController)),
                   FadeInUp(
                       duration: Duration(milliseconds: 1400),
                       child: makeInput(
-                          label: "Confirm Password", obscureText: true,controller: confirmpasswordController)),
+                          label: "Confirm Password",
+                          obscureText: true,
+                          controller: confirmpasswordController)),
                 ],
               ),
               FadeInUp(
@@ -161,12 +160,14 @@ class _SignupPageState extends State<SignupPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text("Already have an account?"),
-                      GestureDetector( onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
-                      },child: Text("Login"),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()));
+                        },
+                        child: Text("Login"),
                       ),
                     ],
                   )),
@@ -177,7 +178,7 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  Widget makeInput({label, obscureText = false,controller}) {
+  Widget makeInput({label, obscureText = false, controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
