@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:finance_tracker/authscreen/auth_page.dart';
+import 'package:finance_tracker/screens/addTransaction.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -101,6 +102,8 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double leftPosition = screenWidth * 0.2;
     return Scaffold(
         backgroundColor: Colors.grey[200],
         // appBar: AppBar(
@@ -141,7 +144,13 @@ class Home extends StatelessWidget {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            // print("hellp");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => addItem()),
+            );
+          },
           shape: CircleBorder(),
           backgroundColor: Color.fromRGBO(215, 178, 157, 1),
           child: Icon(Icons.add),
@@ -177,33 +186,37 @@ class Home extends StatelessWidget {
                   ),
                 ),
               ),
-
-              SliverList(delegate: SliverChildBuilderDelegate((context, index) {
-
-                return ListTile(
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: Icon(Icons.monetization_on),
-                  ),
-                  title: Text("Transportation",style:
-                    TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600
-                    ),),
-                  subtitle: Text("4/12/2024",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey,
-                    fontSize: 12
-                  ),),
-                  trailing: Text("- Rs. 25",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                    color: Colors.red
-                  ),),
-                );
-              }))
+              SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Icon(Icons.monetization_on),
+                    ),
+                    title: Text(
+                      "Transportation",
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      "4/12/2024",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey,
+                          fontSize: 12),
+                    ),
+                    trailing: Text(
+                      "- Rs. 25",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: Colors.red),
+                    ),
+                  );
+                },
+                childCount: 10,
+              ))
             ],
           ),
         ));
@@ -219,7 +232,7 @@ Widget head() {
             width: double.infinity,
             height: 240,
             decoration: BoxDecoration(
-                color: Color(0xff368983),
+                color: Color.fromRGBO(215, 178, 157, 1),
                 borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20))),
@@ -227,7 +240,7 @@ Widget head() {
               children: [
                 Positioned(
                   top: 35,
-                  left: 300,
+                  left: 350,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(7),
                     child: Container(
@@ -252,7 +265,7 @@ Widget head() {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey,
+                          color: Colors.black,
                         ),
                       ),
                       Text(
@@ -260,7 +273,7 @@ Widget head() {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                     ],
@@ -273,143 +286,145 @@ Widget head() {
       ),
       Positioned(
         top: 130,
-        left: 20,
-        child: Container(
-          height: 170,
-          width: 320,
-          decoration: BoxDecoration(
-              color: Color.fromARGB(255, 47, 125, 121),
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                    color: Color.fromRGBO(47, 125, 121, 0.3),
-                    offset: Offset(5, 6),
-                    blurRadius: 12,
-                    spreadRadius: 6)
-              ]),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  children: [
-                    Text(
-                      "Total Balance",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
+        left: 30,
+        child: Center(
+          child: Container(
+            height: 170,
+            width: 350,
+            decoration: BoxDecoration(
+                color: Color.fromARGB(255, 47, 125, 121),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(47, 125, 121, 0.3),
+                      offset: Offset(5, 6),
+                      blurRadius: 12,
+                      spreadRadius: 6)
+                ]),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 10,
                 ),
-              ),
-              SizedBox(
-                height: 7,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15),
-                child: Row(
-                  children: [
-                    Text(
-                      "Rs. 500.00",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 25,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 13,
-                          backgroundColor: Color(0xff368983),
-                          child: Icon(
-                            Icons.arrow_upward,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 7,
-                        ),
-                        Text(
-                          "Income",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 13,
-                          backgroundColor: Color(0xff368983),
-                          child: Icon(
-                            Icons.arrow_downward,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 7,
-                        ),
-                        Text(
-                          "Expenses",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Rs. 300",
-                      style: TextStyle(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Total Balance",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
-                    ),
-                    Text(
-                      "Rs. 300",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17),
-                    )
-                  ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 7,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Rs. 500.00",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 13,
+                            backgroundColor: Color(0xff368983),
+                            child: Icon(
+                              Icons.arrow_upward,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 7,
+                          ),
+                          Text(
+                            "Income",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 13,
+                            backgroundColor: Color(0xff368983),
+                            child: Icon(
+                              Icons.arrow_downward,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 7,
+                          ),
+                          Text(
+                            "Expenses",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Rs. 300",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17),
+                      ),
+                      Text(
+                        "Rs. 300",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
