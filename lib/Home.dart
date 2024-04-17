@@ -1,16 +1,21 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance_tracker/Models/Transactions.dart';
+import 'package:finance_tracker/Services/database_services.dart';
 import 'package:finance_tracker/authscreen/auth_page.dart';
 import 'package:finance_tracker/screens/addTransaction.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class Home extends StatelessWidget {
   Home({super.key});
 
   final user = FirebaseAuth.instance.currentUser!;
+  final DatabaseService _dbservice = DatabaseService();
 
   void signUserOut() {
     FirebaseAuth.instance.signOut();
@@ -155,71 +160,131 @@ class Home extends StatelessWidget {
           backgroundColor: Color.fromRGBO(215, 178, 157, 1),
           child: Icon(Icons.add),
         ),
-        body: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: SizedBox(height: 300, child: head()),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Transactions",
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+        body: StreamBuilder(
+            stream: _dbservice.getTransactions(),
+            builder: (context, snapshot) {
+              List transactions = snapshot.data?.docs ?? [];
+
+              if (transactions.isEmpty) {
+                return CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 300,
+                        child: head(),
                       ),
-                      Text(
-                        "view All",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Transactions",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
+                                Text(
+                                  "view All",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "No Transactions",
+                                style: TextStyle(fontSize: 20),
+                              )
+                            ],
+                          )
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                );
+              }
+
+              return SafeArea(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: 300, child: head()),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Transactions",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                            ),
+                            Text(
+                              "view All",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        Transactions transaction = transactions[index].data();
+
+                        return ListTile(
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: Icon(Icons.monetization_on),
+                          ),
+                          title: Text(
+                            transaction.category,
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w600),
+                          ),
+                          subtitle: Text(
+                            DateFormat("MM/dd/yyyy hh:mm a")
+                                .format(transaction.created.toDate()),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey,
+                                fontSize: 12),
+                          ),
+                          trailing: Text(
+                            transaction.amount.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                                color: Colors.red),
+                          ),
+                        );
+                      },
+                      childCount: transactions.length,
+                    ))
+                  ],
                 ),
-              ),
-              SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Icon(Icons.monetization_on),
-                    ),
-                    title: Text(
-                      "Transportation",
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: Text(
-                      "4/12/2024",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey,
-                          fontSize: 12),
-                    ),
-                    trailing: Text(
-                      "- Rs. 25",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                          color: Colors.red),
-                    ),
-                  );
-                },
-                childCount: 10,
-              ))
-            ],
-          ),
-        ));
+              );
+            }));
   }
 }
 
