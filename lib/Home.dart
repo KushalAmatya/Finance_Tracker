@@ -11,99 +11,139 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   Home({super.key});
 
-  final user = FirebaseAuth.instance.currentUser!;
-  final DatabaseService _dbservice = DatabaseService();
+  @override
+  State<Home> createState() => _HomeState();
+}
 
+class _HomeState extends State<Home> {
+  final user = FirebaseAuth.instance.currentUser!;
+  int totalIncome = 0;
+  int totalExpense = 0;
+  int flag = 0;
+  bool sortby = true;
+  final DatabaseService _dbservice = DatabaseService();
+  initState() {
+    super.initState();
+    totalIncome = 0;
+    totalExpense = 0;
+    // Call a method to calculate totals when the widget initializes
+    calculateTotals();
+  }
+
+  // Method to calculate totalIncome and totalExpense
+  void calculateTotals() async {
+    // Get the transactions
+    QuerySnapshot transactions = await _dbservice.getTransactions().first;
+
+    // Loop through the transactions
+    for (var transaction in transactions.docs) {
+      Transactions t = transaction.data() as Transactions;
+
+      // Check if the transaction belongs to the current user
+      if (t.uid == user.uid) {
+        if (t.type == "Income") {
+          totalIncome += t.amount;
+        } else {
+          totalExpense += t.amount;
+        }
+      }
+
+      // Update the state to reflect changes
+      setState(() {});
+    }
+  }
+
+  // int calcIncome(){
   void signUserOut() {
     FirebaseAuth.instance.signOut();
   }
 
-  // void logOut(BuildContext context) {
-  //   showDialog(
-  //       // Remove the 'context' argument
-  //       context: context,
-  //       builder: (context) {
-  //         return Dialog(
-  //           child: Container(
-  //             height: 400,
-  //             width: 350,
-  //             child: Column(
-  //               children: [
-  //                 Expanded(
-  //                   child: Row(
-  //                     mainAxisAlignment: MainAxisAlignment.center,
-  //                     children: [
-  //                       Column(
-  //                           mainAxisAlignment: MainAxisAlignment.center,
-  //                           children: [
-  //                             Padding(
-  //                               padding: const EdgeInsets.all(8.0),
-  //                               child: Text(
-  //                                 "You're Logged in as:",
-  //                                 style: TextStyle(fontSize: 20),
-  //                               ),
-  //                             ),
-  //                             Padding(
-  //                               padding: const EdgeInsets.all(8.0),
-  //                               child: Text(
-  //                                 user.email!,
-  //                                 style: TextStyle(fontSize: 20),
-  //                               ),
-  //                             ),
-  //                           ])
-  //                     ],
-  //                   ),
-  //                 ),
-  //                 Expanded(
-  //                   child: Row(
-  //                     mainAxisAlignment: MainAxisAlignment.center,
-  //                     children: [
-  //                       Column(
-  //                         children: [
-  //                           Padding(
-  //                             padding: const EdgeInsets.all(8.0),
-  //                             child: Text(
-  //                               "Log Out?",
-  //                               style: TextStyle(fontSize: 20),
-  //                             ),
-  //                           ),
-  //                           Row(
-  //                             children: [
-  //                               Padding(
-  //                                 padding: const EdgeInsets.all(8.0),
-  //                                 child: ElevatedButton(
-  //                                   onPressed: () {
-  //                                     signUserOut();
-  //                                     Navigator.pop(context);
-  //                                   },
-  //                                   child: Text("Yes"),
-  //                                 ),
-  //                               ),
-  //                               Padding(
-  //                                 padding: const EdgeInsets.all(8.0),
-  //                                 child: ElevatedButton(
-  //                                   onPressed: () {
-  //                                     Navigator.pop(context);
-  //                                   },
-  //                                   child: Text("No"),
-  //                                 ),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
+  void logOut(BuildContext context) {
+    showDialog(
+        // Remove the 'context' argument
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Container(
+              height: 400,
+              width: 350,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "You're Logged in as:",
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  user.email!,
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                            ])
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Log Out?",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      signUserOut();
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Yes"),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("No"),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,15 +151,6 @@ class Home extends StatelessWidget {
     double leftPosition = screenWidth * 0.2;
     return Scaffold(
         backgroundColor: Colors.grey[200],
-        // appBar: AppBar(
-        //   leading: Icon(Icons.trending_up_rounded, size: 40),
-        //   backgroundColor: Color.fromRGBO(215, 178, 157, 1),
-        //   actions: [
-        //     Text(user.email!),
-        //     IconButton(
-        //         onPressed: signUserOut, icon: Icon(Icons.logout, size: 40))
-        //   ],
-        // ),
         bottomNavigationBar: SafeArea(
           child: Container(
             // padding: EdgeInsets.all(12),
@@ -139,7 +170,9 @@ class Home extends StatelessWidget {
                 ),
                 Icon(Icons.add_chart, size: 30),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    logOut(context);
+                  },
                   icon: Icon(Icons.person, size: 30),
                   // Icon(Icons.account_circle, size: 40),
                 )
@@ -149,12 +182,23 @@ class Home extends StatelessWidget {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
+          onPressed: () async {
             // print("hellp");
-            Navigator.push(
+
+            final trans = await Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => addItem()),
-            );
+            ) as int?;
+
+            setState(() {
+              if (trans != null) {
+                totalIncome = 0;
+                totalExpense = 0;
+                // flag = 1;
+                // totalIncome += trans ?? 0;
+                calculateTotals();
+              }
+            });
           },
           shape: CircleBorder(),
           backgroundColor: Color.fromRGBO(215, 178, 157, 1),
@@ -171,7 +215,7 @@ class Home extends StatelessWidget {
                     SliverToBoxAdapter(
                       child: SizedBox(
                         height: 300,
-                        child: head(),
+                        child: _Header(context, totalIncome, totalExpense),
                       ),
                     ),
                     SliverToBoxAdapter(
@@ -220,7 +264,12 @@ class Home extends StatelessWidget {
                 child: CustomScrollView(
                   slivers: [
                     SliverToBoxAdapter(
-                      child: SizedBox(height: 300, child: head()),
+                      child: SizedBox(
+                          height: 300,
+                          child: _Header(context, totalIncome,
+                              totalExpense) //Header(totalIncome: totalIncome),
+
+                          ),
                     ),
                     SliverToBoxAdapter(
                       child: Padding(
@@ -236,12 +285,15 @@ class Home extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black),
                             ),
-                            Text(
-                              "view All",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey),
+                            TextButton.icon(
+                              icon: RotatedBox(
+                                  quarterTurns: 1,
+                                  child: Icon(Icons.compare_arrows)),
+                              label: Text(
+                                  sortby ? 'Sort by Date' : 'Sort by Amount'),
+                              onPressed: () => setState(() {
+                                sortby = !sortby;
+                              }),
                             ),
                           ],
                         ),
@@ -251,36 +303,50 @@ class Home extends StatelessWidget {
                         delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         Transactions transaction = transactions[index].data();
+                        if (sortby) {
+                          transactions.sort(
+                              (a, b) => b['created'].compareTo(a['created']));
+                        } else {
+                          transactions.sort(
+                              (a, b) => b['amount'].compareTo(a['amount']));
+                        }
 
+                        if (transaction.uid != user.uid) {
+                          return SizedBox.shrink(); // Skip this transaction
+                        }
                         return ListTile(
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: Icon(Icons.monetization_on),
-                          ),
-                          title: Text(
-                            transaction.category,
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w600),
-                          ),
-                          subtitle: Text(
-                            DateFormat("MM/dd/yyyy hh:mm a")
-                                .format(transaction.created.toDate()),
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey,
-                                fontSize: 12),
-                          ),
-                          trailing: Text(
-                            transaction.amount.toString(),
-                            style: TextStyle(
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: Icon(Icons.monetization_on),
+                            ),
+                            title: Text(
+                              transaction.category,
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: Text(
+                              DateFormat("MM/dd/yyyy hh:mm a")
+                                  .format(transaction.created.toDate()),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey,
+                                  fontSize: 12),
+                            ),
+                            trailing: Text(
+                              transaction.type == "Income"
+                                  ? "+ " + transaction.amount.toString()
+                                  : "- " + transaction.amount.toString(),
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 15,
-                                color: Colors.red),
-                          ),
-                        );
+                                color: transaction.type == "Income"
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ));
                       },
                       childCount: transactions.length,
-                    ))
+                    )),
                   ],
                 ),
               );
@@ -288,7 +354,7 @@ class Home extends StatelessWidget {
   }
 }
 
-Widget head() {
+Widget _Header(BuildContext context, int totalIncome, int totalExpense) {
   return Stack(
     children: [
       Column(
@@ -328,13 +394,14 @@ Widget head() {
                       Text(
                         "Welcome",
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 30,
                           fontWeight: FontWeight.w500,
                           color: Colors.black,
                         ),
                       ),
                       Text(
-                        "Kushal Amataya",
+                        FirebaseAuth.instance.currentUser!.displayName ??
+                            "User",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -378,7 +445,7 @@ Widget head() {
                       Text(
                         "Total Balance",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 20,
                           fontWeight: FontWeight.w500,
                           color: Colors.white,
                         ),
@@ -394,9 +461,9 @@ Widget head() {
                   child: Row(
                     children: [
                       Text(
-                        "Rs. 500.00",
+                        "Rs  ${(totalIncome - totalExpense).toString()}",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -472,14 +539,14 @@ Widget head() {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Rs. 300",
+                        totalIncome.toString(),
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 17),
                       ),
                       Text(
-                        "Rs. 300",
+                        totalExpense.toString(),
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -496,3 +563,8 @@ Widget head() {
     ],
   );
 }
+
+
+// Widget head() {
+//   return 
+// }

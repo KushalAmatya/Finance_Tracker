@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:animate_do/animate_do.dart';
+import 'package:finance_tracker/app/flashmessage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:finance_tracker/authscreen/signup.dart';
+import 'package:toastification/toastification.dart';
 
 class LoginPage extends StatefulWidget {
   final Function? toggleView;
@@ -37,8 +39,12 @@ class _LoginPageState extends State<LoginPage> {
       print(e.code + "this is code");
       print(e.message);
       if (e.code == 'user-not-found') {
+        FlashMessage.show(context,
+            message: "No user found for that email.", isSuccess: false);
         print('No user found for that email.');
       } else if (e.code == 'invalid-credential') {
+        FlashMessage.show(context,
+            message: "Invalid Credential.", isSuccess: false);
         print('Wrong password provided for that user.');
       }
     }
