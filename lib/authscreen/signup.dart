@@ -37,9 +37,11 @@ class _SignupPageState extends State<SignupPage> {
       String cpass = confirmpasswordController.text.toString().trim();
 
       if (cpass == pass) {
-        await FirebaseAuth.instance
+        UserCredential credential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: pass);
         //on sign up navigate to home page
+        await credential.user!
+            .updateDisplayName(email.substring(0, email.indexOf('@')));
       } else {
         print("not matching");
       }

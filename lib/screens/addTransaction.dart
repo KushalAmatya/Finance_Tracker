@@ -88,26 +88,7 @@ class _addItemState extends State<addItem> {
                 height: 30,
               ),
 
-              // Container(
               //
-              //   width: 400,
-              //   child: TextField(
-              //     controller: TransactionController,
-              //     decoration:InputDecoration(
-              //         filled: true,
-              //         fillColor: Colors.white,
-              //         prefixIcon: Icon(Icons.money,size: 20,color: Colors.grey,),
-              //         hintText: "Transaction name",
-              //         border: OutlineInputBorder(
-              //             borderRadius: BorderRadius.circular(12),
-              //             borderSide: BorderSide.none
-              //         )
-              //
-              //
-              //
-              //     ),
-              //   ),
-              // ),
               Container(
                 width: 400,
                 padding: EdgeInsets.symmetric(horizontal: 15),
@@ -119,6 +100,7 @@ class _addItemState extends State<addItem> {
                   value: categoryitem,
                   items: _item
                       .map((e) => DropdownMenuItem(
+                            value: e,
                             child: Container(
                               child: Row(
                                 children: [
@@ -133,7 +115,6 @@ class _addItemState extends State<addItem> {
                                 ],
                               ),
                             ),
-                            value: e,
                           ))
                       .toList(),
                   hint: Text(
@@ -200,7 +181,7 @@ class _addItemState extends State<addItem> {
                   DateTime? newDate = await showDatePicker(
                     context: context,
                     initialDate: selectedDate,
-                    firstDate: DateTime.now(),
+                    firstDate: DateTime(2022),
                     lastDate: DateTime.now().add(Duration(days: 365)),
                   );
                   if (newDate != null) {
@@ -240,7 +221,6 @@ class _addItemState extends State<addItem> {
                   var time = DateTime.parse(selectedDate.toString());
                   var totime = Timestamp.fromDate(time);
                   if (categoryitem == null || AmountController.text == "") {
-                    print("inside");
                     toastification.show(
                         context: context,
                         title: Text('Empty Fields'),
@@ -251,7 +231,7 @@ class _addItemState extends State<addItem> {
                         icon: Icon(Icons.cancel_presentation_sharp),
                         primaryColor: Colors.red);
                   } else {
-                    print("here");
+                    ;
 
                     Transactions transactions = Transactions(
                         uid: user.uid,
@@ -261,14 +241,14 @@ class _addItemState extends State<addItem> {
                         // created: DateTime.parse(DateController.text));
                         created: totime);
                     _dbservice.addtransaction(transactions);
-                    Navigator.pop(context);
+                    Navigator.pop(context, int.parse(AmountController.text));
                     toastification.show(
                         context: context,
                         title: Text('Successfully added'),
                         autoCloseDuration: const Duration(seconds: 3),
                         description: RichText(
                             text: const TextSpan(
-                                text: 'Please fill all the fields ')),
+                                text: 'Please check the statement')),
                         icon: Icon(Icons.check_circle_outlined),
                         primaryColor: Colors.green);
                   }
