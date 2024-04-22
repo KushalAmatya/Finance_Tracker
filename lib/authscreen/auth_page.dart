@@ -1,9 +1,12 @@
+import 'dart:html';
+
 import 'package:finance_tracker/Home.dart';
 import 'package:finance_tracker/authscreen/login.dart';
 import 'package:finance_tracker/authscreen/loginorregister.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:finance_tracker/authscreen/signup.dart';
+import 'package:finance_tracker/History.dart';
 
 class Authpage extends StatelessWidget {
   @override
@@ -13,7 +16,7 @@ class Authpage extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Home();
+            return History();
           }
           //show loginpage if user press login and show signup page if user press signup
           return LoginOrRegister();
