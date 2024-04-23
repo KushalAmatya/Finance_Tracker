@@ -40,11 +40,13 @@ class _addItemState extends State<addItem> {
 
   String? categoryitem;
   DateTime selectedDate = DateTime.now();
+  String? monthYear;
 
   @override
   void initState() {
     // TODO: implement initState
     DateController.text = DateFormat("MM/dd/yyy").format(DateTime.now());
+    monthYear = DateFormat("MMM y").format(DateTime.now());
     super.initState();
   }
 
@@ -189,6 +191,7 @@ class _addItemState extends State<addItem> {
                       DateController.text =
                           DateFormat("MM/dd/yyy").format(newDate);
                       selectedDate = newDate;
+                      monthYear = DateFormat("MMM y").format(newDate);
                     });
                   }
                 },
@@ -231,13 +234,12 @@ class _addItemState extends State<addItem> {
                         icon: Icon(Icons.cancel_presentation_sharp),
                         primaryColor: Colors.red);
                   } else {
-                    ;
-
                     Transactions transactions = Transactions(
                         uid: user.uid,
                         category: categoryitem.toString(),
                         amount: int.parse(AmountController.text),
                         type: dropdownValue,
+                        monthYear: monthYear.toString(),
                         // created: DateTime.parse(DateController.text));
                         created: totime);
                     _dbservice.addtransaction(transactions);
