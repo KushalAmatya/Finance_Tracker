@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:animate_do/animate_do.dart';
-import 'package:finance_tracker/Home.dart';
+import 'package:finance_tracker/screens/Home.dart';
 import 'package:finance_tracker/authscreen/auth_page.dart';
 import 'package:finance_tracker/authscreen/login.dart';
 import 'package:flutter/material.dart';
