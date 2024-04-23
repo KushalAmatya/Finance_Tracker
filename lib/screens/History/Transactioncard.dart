@@ -2,12 +2,16 @@ import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TransactionCard extends StatelessWidget {
   const TransactionCard({super.key, this.data});
   final dynamic data;
   @override
   Widget build(BuildContext context) {
+    // print(DateTime.parse(data['created']));
+    DateTime dt = data['created'].toDate();
+
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Column(
@@ -65,7 +69,7 @@ class TransactionCard extends StatelessWidget {
                             Row(
                               children: [],
                             ),
-                            Text(data['created'].toString())
+                            Text(DateFormat("MM/dd/yyyy hh:mm a").format(dt)),
                           ],
                         ),
                       ),

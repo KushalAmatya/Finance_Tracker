@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:finance_tracker/screens/History/Transactioncard.dart';
+import 'package:flutter/material.dart';
 
 class Viewcart extends StatelessWidget {
   Viewcart(
@@ -20,7 +21,7 @@ class Viewcart extends StatelessWidget {
         .collection('transaction')
         .where('uid', isEqualTo: user.toString())
         // .orderBy('created', descending: true)
-        // // .where('monthYear', isEqualTo: monthYear)
+        .where('monthYear', isEqualTo: monthYear)
         .where('type', isEqualTo: type);
 
     if (category != "All") {
@@ -35,7 +36,7 @@ class Viewcart extends StatelessWidget {
             print(snapshot.error);
             return Center(child: Text("Something went wrong"));
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: Text("loading"));
+            return Center(child: CircularProgressIndicator());
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
               child: Center(child: Text("No transaction found")),
