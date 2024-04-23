@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:finance_tracker/Transactioncard.dart';
+import 'package:finance_tracker/screens/History/Transactioncard.dart';
 
 class Viewcart extends StatelessWidget {
   Viewcart(

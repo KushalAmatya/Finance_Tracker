@@ -1,5 +1,5 @@
-import 'package:finance_tracker/Transactioncard.dart';
-import 'package:finance_tracker/viewcart.dart';
+import 'package:finance_tracker/screens/History/Transactioncard.dart';
+import 'package:finance_tracker/screens/History/viewcart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

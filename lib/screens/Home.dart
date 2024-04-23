@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance_tracker/screens/History/History.dart';
 import 'package:finance_tracker/Models/Transactions.dart';
 import 'package:finance_tracker/Services/database_services.dart';
 import 'package:finance_tracker/authscreen/auth_page.dart';
@@ -288,65 +289,63 @@ class _HomeState extends State<Home> {
                             TextButton.icon(
                               icon: RotatedBox(
                                   quarterTurns: 1,
-                                  child: Icon(Icons.compare_arrows)),
-                              label: Text(
-                                  sortby ? 'Sort by Date' : 'Sort by Amount'),
-                              onPressed: () => setState(() {
-                                sortby = !sortby;
-                              }),
+                                  child: Icon(Icons.more_sharp)),
+                              label: Text('See More.'),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => History()));
+                              },
                             ),
                           ],
                         ),
                       ),
                     ),
                     SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        Transactions transaction = transactions[index].data();
-                        if (sortby) {
-                          transactions.sort(
-                              (a, b) => b['created'].compareTo(a['created']));
-                        } else {
-                          transactions.sort(
-                              (a, b) => b['amount'].compareTo(a['amount']));
-                        }
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                      Transactions transaction = transactions[index].data();
 
-                        if (transaction.uid != user.uid) {
-                          return SizedBox.shrink(); // Skip this transaction
-                        }
-                        return ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: Icon(Icons.monetization_on),
-                            ),
-                            title: Text(
-                              transaction.category,
-                              style: TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.w600),
-                            ),
-                            subtitle: Text(
-                              DateFormat("MM/dd/yyyy hh:mm a")
-                                  .format(transaction.created.toDate()),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey,
-                                  fontSize: 12),
-                            ),
-                            trailing: Text(
-                              transaction.type == "Income"
-                                  ? "+ " + transaction.amount.toString()
-                                  : "- " + transaction.amount.toString(),
-                              style: TextStyle(
+                      if (transaction.uid != user.uid) {
+                        return SizedBox.shrink(); // Skip this transaction
+                      }
+                      // return Text(transaction.category);
+                      return ListTile(
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: Icon(Icons.monetization_on),
+                          ),
+                          title: Text(
+                            transaction.category,
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w600),
+                          ),
+                          subtitle: Text(
+                            DateFormat("MM/dd/yyyy hh:mm a")
+                                .format(transaction.created.toDate()),
+                            style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                                color: transaction.type == "Income"
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
-                            ));
-                      },
-                      childCount: transactions.length,
-                    )),
+                                color: Colors.grey,
+                                fontSize: 12),
+                          ),
+                          trailing: Text(
+                            transaction.type == "Income"
+                                ? "+ " + transaction.amount.toString()
+                                : "- " + transaction.amount.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              color: transaction.type == "Income"
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                          ));
+                    },
+                            childCount: transactions.length > 5
+                                ? 5
+                                : transactions
+                                    .length // Show only 5 transactions
+                            )),
                   ],
                 ),
               );

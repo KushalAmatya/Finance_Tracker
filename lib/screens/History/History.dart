@@ -1,6 +1,6 @@
-import 'package:finance_tracker/Category.dart';
-import 'package:finance_tracker/Months.dart';
-import 'package:finance_tracker/tabview.dart';
+import 'package:finance_tracker/screens/History/Category.dart';
+import 'package:finance_tracker/screens/History/Months.dart';
+import 'package:finance_tracker/screens/History/tabview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
