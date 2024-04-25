@@ -151,7 +151,7 @@ class _ChartState extends State<Chart> {
           ),
         ),
       ),
-      body: Container(
+      body: Center(
         child: SingleChildScrollView(
           child: Column(
             // mainAxisAlignment: MainAxisAlignment.center,
@@ -165,8 +165,8 @@ class _ChartState extends State<Chart> {
               ),
               Center(
                 child: Container(
-                  height: 370,
-                  width: 350,
+                  height: 450,
+                  width: 400,
                   child: Swiper(
                     itemBuilder: (BuildContext context, int index) {
                       if (index == 0) {

@@ -16,7 +16,6 @@ class TransactionCard extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       child: Column(
         children: [
-          Row(),
           ListView.builder(
               shrinkWrap: true,
               itemCount: 1,
