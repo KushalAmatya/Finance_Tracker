@@ -94,8 +94,9 @@ class _LinechartState extends State<Linechart> {
                     maxX: sortDate
                         .indexOf(sortDate[sortDate.length - 1])
                         .toDouble(),
-                    minY: sortAmount[0]['amount'],
-                    maxY: sortAmount[sortAmount.length - 1]['amount'],
+                    minY: sortAmount[0]['amount'].toDouble(),
+                    maxY:
+                        sortAmount[sortAmount.length - 1]['amount'].toDouble(),
                     gridData: FlGridData(
                         show: true,
                         getDrawingHorizontalLine: (value) {
