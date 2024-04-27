@@ -12,7 +12,8 @@ class Authpage extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return PlanScreen();
+            // return PlanScreen();
+            return Home();
           }
           //show loginpage if user press login and show signup page if user press signup
           return LoginOrRegister();

@@ -5,6 +5,7 @@ import 'package:finance_tracker/screens/History/History.dart';
 import 'package:finance_tracker/Models/Transactions.dart';
 import 'package:finance_tracker/Services/database_services.dart';
 import 'package:finance_tracker/screens/Charts/DataCharts.dart';
+import 'package:finance_tracker/screens/Planning.dart';
 import 'package:finance_tracker/screens/addTransaction.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -164,7 +165,14 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Icon(Icons.home_rounded, size: 30),
-                Icon(Icons.money, size: 30),
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PlanScreen()));
+                    },
+                    icon: Icon(Icons.money, size: 30)),
                 Icon(
                   Icons.home,
                   size: 0,

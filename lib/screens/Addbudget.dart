@@ -128,7 +128,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                 child: MaterialButton(
                   minWidth: double.infinity,
                   height: 60,
-                  onPressed: () {
+                  onPressed: () async {
                     if (NameController.text == "" ||
                         AmountController.text == "" ||
                         CategoryController == "") {
@@ -142,24 +142,42 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                           icon: Icon(Icons.cancel_presentation_sharp),
                           primaryColor: Colors.red);
                     } else {
-                      Budgets budgets = Budgets(
-                          uid: user.uid,
-                          category: CategoryController.text.toString(),
-                          amount: int.parse(AmountController.text),
-                          bname: NameController.text.toString(),
-                          exceed: exceed,
-                          thres: thres);
-                      _dbservice.addbudget(budgets);
-                      Navigator.pop(context, int.parse(AmountController.text));
-                      toastification.show(
-                          context: context,
-                          title: Text('Successfully added'),
-                          autoCloseDuration: const Duration(seconds: 3),
-                          description: RichText(
-                              text: const TextSpan(
-                                  text: 'Please check the statement')),
-                          icon: Icon(Icons.check_circle_outlined),
-                          primaryColor: Colors.green);
+                      final String category =
+                          CategoryController.text.toString();
+                      final bool exists = await _dbservice.checkBudgetExists(
+                          category, user.uid);
+                      if (exists) {
+                        toastification.show(
+                            context: context,
+                            title: Text('Budget Already Exists'),
+                            autoCloseDuration: const Duration(seconds: 5),
+                            description: RichText(
+                                text: const TextSpan(
+                                    text:
+                                        'You already have a budget for this category')),
+                            icon: Icon(Icons.cancel_presentation_sharp),
+                            primaryColor: Colors.red);
+                      } else {
+                        Budgets budgets = Budgets(
+                            uid: user.uid,
+                            category: CategoryController.text.toString(),
+                            amount: int.parse(AmountController.text),
+                            bname: NameController.text.toString(),
+                            exceed: exceed,
+                            thres: thres);
+                        _dbservice.addbudget(budgets);
+                        Navigator.pop(
+                            context, int.parse(AmountController.text));
+                        toastification.show(
+                            context: context,
+                            title: Text('Successfully added'),
+                            autoCloseDuration: const Duration(seconds: 3),
+                            description: RichText(
+                                text: const TextSpan(
+                                    text: 'Please check the statement')),
+                            icon: Icon(Icons.check_circle_outlined),
+                            primaryColor: Colors.green);
+                      }
                     }
                   },
                   color: Color.fromRGBO(215, 178, 157, 1),
