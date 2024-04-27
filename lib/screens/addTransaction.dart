@@ -50,6 +50,89 @@ class _addItemState extends State<addItem> {
     super.initState();
   }
 
+  Future<double> _getTotalAmountForCategory(String category) async {
+    double totalAmount = 0;
+    try {
+      final transactionsSnapshot = await FirebaseFirestore.instance
+          .collection('transaction')
+          .where('uid', isEqualTo: user.uid)
+          .where('category', isEqualTo: category)
+          .get();
+
+      for (var transaction in transactionsSnapshot.docs) {
+        totalAmount += (transaction.data() as Map<String, dynamic>)['amount'];
+      }
+
+      print('Category: $category, Total Amount: $totalAmount');
+    } catch (e) {
+      print('Error calculating total amount for category: $e');
+    }
+    return totalAmount;
+  }
+
+  Future<void> _checkBudgetAndNotify(
+      String category, double transactionAmount) async {
+    try {
+      // Get the budget for the category
+      final budgetSnapshot = await FirebaseFirestore.instance
+          .collection('budget')
+          .where('uid', isEqualTo: user.uid)
+          .where('category', isEqualTo: category)
+          .limit(1)
+          .get();
+
+      // Check if a budget plan exists for the category
+      if (budgetSnapshot.docs.isNotEmpty) {
+        final budgetData = budgetSnapshot.docs.first.data();
+        final double budgetAmount = budgetData['amount'];
+        final bool isExceeded = budgetData['exceed'];
+        final bool isThres = budgetData['thres'];
+
+        // Calculate total amount for the category
+        final totalAmountForCategory =
+            await _getTotalAmountForCategory(category);
+        print(totalAmountForCategory);
+        print(budgetAmount);
+        // Check if the transaction amount exceeds the budget amount
+        if (totalAmountForCategory > 0.7 * budgetAmount &&
+            isThres &&
+            totalAmountForCategory < budgetAmount) {
+          print("here inside");
+          toastification.show(
+            context: context,
+            title: Text('Budget Exceeded'),
+            autoCloseDuration: const Duration(seconds: 5),
+            description: RichText(
+              text: const TextSpan(
+                text: "You have exceeded the budget's 70%  ",
+              ),
+            ),
+            icon: Icon(Icons.warning),
+            primaryColor: Colors.orange,
+          );
+        }
+
+        // Check if the total amount for the category exceeds the budget amount
+        if (totalAmountForCategory > budgetAmount && isExceeded) {
+          toastification.show(
+            context: context,
+            title: Text('Budget Exceeded'),
+            autoCloseDuration: const Duration(seconds: 5),
+            description: RichText(
+              text: const TextSpan(
+                text: 'You have exceeded the budget',
+              ),
+            ),
+            icon: Icon(Icons.warning),
+            primaryColor: Colors.red,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error checking budget: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -218,7 +301,7 @@ class _addItemState extends State<addItem> {
                     backgroundColor: Color.fromARGB(255, 47, 125, 121),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12))),
-                onPressed: () {
+                onPressed: () async {
                   // Add transaction
 
                   var time = DateTime.parse(selectedDate.toString());
@@ -242,7 +325,16 @@ class _addItemState extends State<addItem> {
                         monthYear: monthYear.toString(),
                         // created: DateTime.parse(DateController.text));
                         created: totime);
-                    _dbservice.addtransaction(transactions);
+                    await _dbservice.addtransaction(transactions);
+                    final totalAmountForCategory =
+                        await _getTotalAmountForCategory(
+                            categoryitem.toString());
+
+                    // Check budget
+                    await _checkBudgetAndNotify(
+                        categoryitem.toString(),
+                        totalAmountForCategory +
+                            int.parse(AmountController.text).toDouble());
                     Navigator.pop(context, int.parse(AmountController.text));
                     toastification.show(
                         context: context,

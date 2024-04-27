@@ -5,7 +5,7 @@ import 'package:finance_tracker/Models/Budgets.dart';
 import 'package:finance_tracker/Models/Transactions.dart';
 
 const String Transaction_Collection = "transaction";
-const String Budget_Collection = "Budget";
+const String Budget_Collection = "budget";
 
 class DatabaseService {
   final _firestore = FirebaseFirestore.instance;
@@ -37,11 +37,24 @@ class DatabaseService {
     return _budgetref.snapshots();
   }
 
-  void addtransaction(Transactions transactions) async {
+  Future addtransaction(Transactions transactions) async {
     _transactionref.add(transactions);
   }
 
   void addbudget(Budgets budgets) async {
     _budgetref.add(budgets);
+  }
+
+  void deletebudget(String id) {
+    _budgetref.doc(id).delete();
+  }
+
+  Future<bool> checkBudgetExists(String category, String uid) async {
+    final querySnapshot = await _budgetref
+        .where('uid', isEqualTo: uid)
+        .where('category', isEqualTo: category)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
   }
 }
