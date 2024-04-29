@@ -26,6 +26,18 @@ class _HomeState extends State<Home> {
   int totalExpense = 0;
   int flag = 0;
   bool sortby = true;
+  final Map<String, Map<String, dynamic>> categoryData = {
+    "Food": {"icon": Icons.fastfood, "color": Colors.red},
+    "Entertainment": {"icon": Icons.movie, "color": Colors.blue},
+    "Rent": {"icon": Icons.home, "color": Colors.orange},
+    "Transportation": {"icon": Icons.directions_car, "color": Colors.green},
+    "Education": {"icon": Icons.school, "color": Colors.purple},
+    "Health": {"icon": Icons.local_hospital, "color": Colors.teal},
+    "Others": {"icon": Icons.attach_money, "color": Colors.grey},
+    "Salary": {"icon": Icons.work, "color": Colors.green},
+    "Bonus": {"icon": Icons.monetization_on, "color": Colors.amber},
+    "Interest": {"icon": Icons.account_balance, "color": Colors.indigo},
+  };
   final DatabaseService _dbservice = DatabaseService();
   initState() {
     super.initState();
@@ -328,10 +340,17 @@ class _HomeState extends State<Home> {
                         return SizedBox.shrink(); // Skip this transaction
                       }
                       // return Text(transaction.category);
+                      IconData iconData =
+                          categoryData[transaction.category]!['icon'];
+                      Color color =
+                          categoryData[transaction.category]!['color'];
                       return ListTile(
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: Icon(Icons.monetization_on),
+                          leading: CircleAvatar(
+                            backgroundColor: color,
+                            child: Icon(
+                              iconData,
+                              color: Colors.white,
+                            ),
                           ),
                           title: Text(
                             transaction.category,

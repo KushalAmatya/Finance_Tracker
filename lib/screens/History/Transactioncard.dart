@@ -7,11 +7,13 @@ import 'package:intl/intl.dart';
 class TransactionCard extends StatelessWidget {
   const TransactionCard({super.key, this.data});
   final dynamic data;
+
   @override
   Widget build(BuildContext context) {
     // print(DateTime.parse(data['created']));
     DateTime dt = data['created'].toDate();
-
+    IconData iconData = categoryData[data['category']]!['icon'];
+    Color color = categoryData[data['category']]!['color'];
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Column(
@@ -45,10 +47,12 @@ class TransactionCard extends StatelessWidget {
                             width: 30,
                             height: 30,
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.green),
+                                shape: BoxShape.circle, color: color),
                             child: Center(
-                              child: Icon(Icons.local_grocery_store),
+                              child: Icon(
+                                iconData,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -79,3 +83,16 @@ class TransactionCard extends StatelessWidget {
     );
   }
 }
+
+const Map<String, Map<String, dynamic>> categoryData = {
+  "Food": {"icon": Icons.fastfood, "color": Colors.red},
+  "Entertainment": {"icon": Icons.movie, "color": Colors.blue},
+  "Rent": {"icon": Icons.home, "color": Colors.orange},
+  "Transportation": {"icon": Icons.directions_car, "color": Colors.green},
+  "Education": {"icon": Icons.school, "color": Colors.purple},
+  "Health": {"icon": Icons.local_hospital, "color": Colors.teal},
+  "Others": {"icon": Icons.attach_money, "color": Colors.grey},
+  "Salary": {"icon": Icons.work, "color": Colors.green},
+  "Bonus": {"icon": Icons.monetization_on, "color": Colors.amber},
+  "Interest": {"icon": Icons.account_balance, "color": Colors.indigo},
+};

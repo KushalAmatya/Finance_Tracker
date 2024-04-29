@@ -22,22 +22,27 @@ class _CategoryState extends State<Category> {
     "Transportation",
     "Education",
     "Health",
-    "Others"
+    "Others",
+    "Salary",
+    "Bonus",
+    "Interest",
   ];
   @override
   void initState() {
     // TODO: implement initState
+    currentcategory = "All";
+    scrollSeclectedCategory();
     super.initState();
   }
 
-  // scrollSeclectedMonth() {
-  //   final selectedmonthindex = Category.indexOf(currentmonth);
-  //   if (selectedmonthindex != -1) {
-  //     final scrollOffset = (selectedmonthindex * 100.00) - 170;
-  //     scrollController.animateTo(scrollOffset,
-  //         duration: Duration(milliseconds: 500), curve: Curves.ease);
-  //   }
-  // }
+  scrollSeclectedCategory() {
+    final selectedcategoryindex = _item.indexOf(currentcategory);
+    if (selectedcategoryindex != -1) {
+      final scrollOffset = (selectedcategoryindex * 100.00) - 170;
+      scrollController.animateTo(scrollOffset,
+          duration: Duration(milliseconds: 500), curve: Curves.ease);
+    }
+  }
 
   Widget build(BuildContext context) {
     return Container(
@@ -52,6 +57,7 @@ class _CategoryState extends State<Category> {
                 setState(() {
                   currentcategory = _item[index];
                   widget.onChanged(_item[index]);
+                  scrollSeclectedCategory();
                 });
               },
               child: Container(

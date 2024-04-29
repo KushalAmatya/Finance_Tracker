@@ -19,6 +19,19 @@ class _BudgetScreenState extends State<BudgetScreen>
   final user = FirebaseAuth.instance.currentUser!;
   late List<Map<String, dynamic>> budgetData = [];
 
+  final Map<String, Map<String, dynamic>> categoryData = {
+    "Food": {"icon": Icons.fastfood, "color": Colors.red},
+    "Entertainment": {"icon": Icons.movie, "color": Colors.blue},
+    "Rent": {"icon": Icons.home, "color": Colors.orange},
+    "Transportation": {"icon": Icons.directions_car, "color": Colors.green},
+    "Education": {"icon": Icons.school, "color": Colors.purple},
+    "Health": {"icon": Icons.local_hospital, "color": Colors.teal},
+    "Others": {"icon": Icons.attach_money, "color": Colors.grey},
+    "Salary": {"icon": Icons.work, "color": Colors.green},
+    "Bonus": {"icon": Icons.monetization_on, "color": Colors.amber},
+    "Interest": {"icon": Icons.account_balance, "color": Colors.indigo},
+  };
+
   @override
   void initState() {
     super.initState();
@@ -104,7 +117,8 @@ class _BudgetScreenState extends State<BudgetScreen>
                           totalAmount != 0 ? totalAmount / amount : 0;
                       print(totalAmount);
                       String documentId = cardData['id'];
-
+                      IconData iconData = categoryData[category]!['icon'];
+                      Color color = categoryData[category]!['color'];
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Container(
@@ -133,11 +147,14 @@ class _BudgetScreenState extends State<BudgetScreen>
                                 width: 30,
                                 height: 30,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                  color: color,
                                 ),
                                 child: Center(
-                                  child: Icon(Icons.local_grocery_store),
+                                  child: Icon(
+                                    iconData,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -195,7 +212,7 @@ class _BudgetScreenState extends State<BudgetScreen>
                                       animation: true,
                                       animationDuration: 1000,
                                       percent: percent > 1.0 ? 1.0 : percent,
-                                      progressColor: Colors.purple,
+                                      progressColor: color,
                                     ),
                                     Text((percent * 100).toStringAsFixed(2) +
                                         "%"),
@@ -219,6 +236,8 @@ class _BudgetScreenState extends State<BudgetScreen>
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        shape: CircleBorder(),
+        backgroundColor: Color.fromRGBO(215, 178, 157, 1),
         onPressed: () async {
           final addedAmount = await Navigator.push(
             context,
