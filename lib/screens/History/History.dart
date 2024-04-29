@@ -34,7 +34,7 @@ class _HistoryState extends State<History> {
       ),
       body: Column(
         children: [
-          Text("Transactions"),
+          // Text("Transactions"),
           Months(onChanged: (String? value) {
             if (value != null) {
               setState(() {
