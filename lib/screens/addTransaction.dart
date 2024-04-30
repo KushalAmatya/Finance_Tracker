@@ -124,8 +124,9 @@ class _addItemState extends State<addItem> {
             title: Text('Budget Exceeded'),
             autoCloseDuration: const Duration(seconds: 5),
             description: RichText(
-              text: const TextSpan(
-                text: "You have exceeded the budget's 70%  ",
+              text: TextSpan(
+                text:
+                    "You have exceeded the budget's 70% of Category: $category ",
               ),
             ),
             icon: Icon(Icons.warning),
@@ -140,8 +141,8 @@ class _addItemState extends State<addItem> {
             title: Text('Budget Exceeded'),
             autoCloseDuration: const Duration(seconds: 5),
             description: RichText(
-              text: const TextSpan(
-                text: 'You have exceeded the budget',
+              text: TextSpan(
+                text: 'You have exceeded the budget for Category: $category',
               ),
             ),
             icon: Icon(Icons.warning),
@@ -165,7 +166,7 @@ class _addItemState extends State<addItem> {
         child: Container(
           color: Colors.grey[200],
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               SizedBox(
                 height: 30,
@@ -196,6 +197,7 @@ class _addItemState extends State<addItem> {
 
               Container(
                 width: 400,
+                padding: EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -204,8 +206,13 @@ class _addItemState extends State<addItem> {
                   ),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Icon(
+                      Icons.type_specimen,
+                      size: 20,
+                      color: Colors.grey,
+                    ),
                     Text("Type:"),
                     SizedBox(
                       width: 20,
@@ -247,91 +254,116 @@ class _addItemState extends State<addItem> {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(width: 2, color: Colors.white),
                 ),
-                child: DropdownButton<String>(
-                  value: categoryitem,
-                  items: _item
-                      .map((e) => DropdownMenuItem(
-                            value: e,
-                            child: Container(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: categoryData[e]!['color']),
-                                    child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Icon(
-                                          categoryData[e]!['icon'],
-                                          color: Colors.white,
-                                        )),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    e,
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.grey),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ))
-                      .toList(),
-                  hint: Text(
-                    "Category",
-                    style: TextStyle(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Icon(
+                      Icons.category_sharp,
+                      size: 20,
                       color: Colors.grey,
                     ),
-                  ),
-                  dropdownColor: Colors.white,
-                  isExpanded: true,
-                  underline: Container(),
-                  onChanged: ((value) {
-                    setState(() {
-                      categoryitem = value!;
-                    });
-                  }),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Text("Category:"),
+                    SizedBox(
+                      width: 80,
+                    ),
+                    Expanded(
+                      child: DropdownButton<String>(
+                        value: categoryitem,
+                        items: _item
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Container(
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: categoryData[e]!['color']),
+                                          child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
+                                              child: Icon(
+                                                categoryData[e]!['icon'],
+                                                color: Colors.white,
+                                              )),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          e,
+                                          style: TextStyle(
+                                              fontSize: 14, color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                        hint: Text(
+                          "",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        dropdownColor: Colors.white,
+                        isExpanded: true,
+                        underline: Container(),
+                        onChanged: ((value) {
+                          setState(() {
+                            categoryitem = value!;
+                          });
+                        }),
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
               SizedBox(
                 height: 30,
               ),
-              TextField(
-                controller: DateController,
-                textAlignVertical: TextAlignVertical.center,
-                readOnly: true,
-                onTap: () async {
-                  DateTime? newDate = await showDatePicker(
-                    context: context,
-                    initialDate: selectedDate,
-                    firstDate: DateTime(2022),
-                    lastDate: DateTime.now().add(Duration(days: 365)),
-                  );
-                  if (newDate != null) {
-                    setState(() {
-                      DateController.text =
-                          DateFormat("MM/dd/yyy").format(newDate);
-                      selectedDate = newDate;
-                      monthYear = DateFormat("MMM y").format(newDate);
-                    });
-                  }
-                },
-                decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    prefixIcon: Icon(
-                      Icons.access_time_outlined,
-                      size: 20,
-                      color: Colors.grey,
-                    ),
-                    hintText: "Date",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none)),
+              Container(
+                width: 400,
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(width: 2, color: Colors.white)),
+                child: TextField(
+                  controller: DateController,
+                  textAlignVertical: TextAlignVertical.center,
+                  readOnly: true,
+                  onTap: () async {
+                    DateTime? newDate = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate,
+                      firstDate: DateTime(2022),
+                      lastDate: DateTime.now().add(Duration(days: 365)),
+                    );
+                    if (newDate != null) {
+                      setState(() {
+                        DateController.text =
+                            DateFormat("MM/dd/yyy").format(newDate);
+                        selectedDate = newDate;
+                        monthYear = DateFormat("MMM y").format(newDate);
+                      });
+                    }
+                  },
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      prefixIcon: Icon(
+                        Icons.access_time_outlined,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
+                      hintText: "Date",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none)),
+                ),
               ),
               SizedBox(
                 height: 30,
@@ -385,12 +417,12 @@ class _addItemState extends State<addItem> {
                             context, int.parse(AmountController.text));
                         toastification.show(
                             context: context,
-                            title: Text('Successfully added'),
+                            title: Text('Successfully added transaction.'),
                             autoCloseDuration: const Duration(seconds: 3),
                             description: RichText(
                                 text: const TextSpan(
                                     text: 'Please check the statement')),
-                            icon: Icon(Icons.check_circle_outlined),
+                            icon: Icon(Icons.check_circle),
                             primaryColor: Colors.green);
                       }
                     },

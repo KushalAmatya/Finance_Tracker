@@ -12,12 +12,34 @@ class AddBudgetPage extends StatefulWidget {
 
 bool thres = false;
 bool exceed = false;
+String? categoryitem;
 
 class _AddBudgetPageState extends State<AddBudgetPage> {
   final user = FirebaseAuth.instance.currentUser!;
   final AmountController = TextEditingController();
   final CategoryController = TextEditingController();
   final NameController = TextEditingController();
+  final Map<String, Map<String, dynamic>> _item = {
+    "Food": {"icon": Icons.fastfood, "color": Colors.red},
+    "Entertainment": {"icon": Icons.movie, "color": Colors.blue},
+    "Rent": {"icon": Icons.home, "color": Colors.orange},
+    "Transportation": {"icon": Icons.directions_car, "color": Colors.green},
+    "Education": {"icon": Icons.school, "color": Colors.purple},
+    "Health": {"icon": Icons.local_hospital, "color": Colors.teal},
+    "Others": {"icon": Icons.attach_money, "color": Colors.grey},
+    // "Salary": {"icon": Icons.work, "color": Colors.green},
+    // "Bonus": {"icon": Icons.monetization_on, "color": Colors.amber},
+    // "Interest": {"icon": Icons.account_balance, "color": Colors.indigo},
+  };
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    categoryitem = null;
+    thres = false;
+    exceed = false;
+    super.initState();
+  }
 
   final DatabaseService _dbservice = DatabaseService();
   @override
@@ -37,7 +59,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                 hintText: 'Budget Name',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: BorderSide(color: Colors.grey),
                 ),
               ),
             ),
@@ -48,7 +70,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                 hintText: 'Amount',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: BorderSide(color: Colors.grey),
                 ),
               ),
               keyboardType: TextInputType.number,
@@ -76,14 +98,81 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
             //   ),
             // ),
             // SizedBox(height: 10.0),
-            TextField(
-              controller: CategoryController,
-              decoration: InputDecoration(
-                hintText: 'Categories',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: Colors.black),
-                ),
+            Container(
+              width: 400,
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: Colors.grey),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Icon(
+                    Icons.category_sharp,
+                    size: 20,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text("Category:"),
+                  SizedBox(
+                    width: 80,
+                  ),
+                  Expanded(
+                    child: DropdownButton<String>(
+                      value: categoryitem,
+                      items: _item.entries
+                          .map((MapEntry<String, Map<String, dynamic>> entry) {
+                        final String category = entry.key;
+                        final IconData icon = entry.value['icon'];
+                        final Color color = entry.value['color'];
+                        return DropdownMenuItem(
+                          value: category,
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: color,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    icon,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                category,
+                                style:
+                                    TextStyle(fontSize: 18, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      hint: Text(
+                        "Category",
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      dropdownColor: Colors.white,
+                      isExpanded: true,
+                      underline: Container(),
+                      onChanged: ((value) {
+                        setState(() {
+                          categoryitem = value!;
+                        });
+                      }),
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 10.0),
@@ -131,7 +220,8 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                   onPressed: () async {
                     if (NameController.text == "" ||
                         AmountController.text == "" ||
-                        CategoryController == "") {
+                        categoryitem == "" ||
+                        categoryitem == null) {
                       toastification.show(
                           context: context,
                           title: Text('Empty Fields'),
@@ -142,8 +232,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                           icon: Icon(Icons.cancel_presentation_sharp),
                           primaryColor: Colors.red);
                     } else {
-                      final String category =
-                          CategoryController.text.toString();
+                      final String category = categoryitem.toString();
                       final bool exists = await _dbservice.checkBudgetExists(
                           category, user.uid);
                       if (exists) {
@@ -160,7 +249,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                       } else {
                         Budgets budgets = Budgets(
                             uid: user.uid,
-                            category: CategoryController.text.toString(),
+                            category: categoryitem.toString(),
                             amount: int.parse(AmountController.text),
                             bname: NameController.text.toString(),
                             exceed: exceed,

@@ -1,8 +1,11 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_tracker/Models/Transactions.dart';
 import 'package:finance_tracker/screens/Addbudget.dart';
 import 'package:finance_tracker/screens/History/Category.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -110,7 +113,8 @@ class _BudgetScreenState extends State<BudgetScreen>
                     itemBuilder: (context, index) {
                       var cardData = budgetData[index];
                       String category = cardData['category'];
-                      double amount = cardData['amount'];
+                      // String bname = cardData['bname'];
+                      double amount = cardData['amount'].toDouble();
                       double totalAmount =
                           totalAmounts.isNotEmpty ? totalAmounts[index] : 0;
                       double percent =
@@ -119,110 +123,130 @@ class _BudgetScreenState extends State<BudgetScreen>
                       String documentId = cardData['id'];
                       IconData iconData = categoryData[category]!['icon'];
                       Color color = categoryData[category]!['color'];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Container(
+                      return Dismissible(
+                        background: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.red,
                             borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 10),
-                                color: Colors.grey.withOpacity(0.09),
-                                blurRadius: 10.0,
-                                spreadRadius: 4.0,
-                              ),
-                            ],
                           ),
-                          child: ListTile(
-                            minVerticalPadding: 10,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 0,
-                            ),
-                            leading: Container(
-                              width: 70,
-                              height: 100,
-                              child: Container(
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: color,
+                          child: Icon(Icons.delete, color: Colors.white),
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                        ),
+                        key: ValueKey<String>(cardData['category']),
+                        onDismissed: (DismissDirection direction) async {
+                          if (direction == DismissDirection.endToStart) {
+                            _dbservice.deletebudget(documentId);
+                            _fetchData();
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: Offset(0, 10),
+                                  color: Colors.grey.withOpacity(0.09),
+                                  blurRadius: 10.0,
+                                  spreadRadius: 4.0,
                                 ),
-                                child: Center(
-                                  child: Icon(
-                                    iconData,
-                                    color: Colors.white,
+                              ],
+                            ),
+                            child: ListTile(
+                              minVerticalPadding: 10,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 0,
+                              ),
+                              leading: Container(
+                                width: 70,
+                                height: 100,
+                                child: Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: color,
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      iconData,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            title: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(category),
-                                ),
-                                PopupMenuButton(
-                                  color: Colors.white,
-                                  itemBuilder: (context) => [
-                                    PopupMenuItem(
-                                      value: "edit",
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.edit),
-                                          SizedBox(width: 8),
-                                          Text("Edit"),
-                                        ],
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      category.toUpperCase(),
+                                    ),
+                                  ),
+                                  PopupMenuButton(
+                                    color: Colors.white,
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        value: "edit",
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.edit),
+                                            SizedBox(width: 8),
+                                            Text("Edit"),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: "delete",
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.delete),
-                                          SizedBox(width: 8),
-                                          Text("Delete"),
-                                        ],
+                                      PopupMenuItem(
+                                        value: "delete",
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.delete),
+                                            SizedBox(width: 8),
+                                            Text("Delete"),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                  onSelected: (value) {
-                                    if (value == "edit") {
-                                      // Handle edit action
-                                    } else if (value == "delete") {
-                                      _dbservice.deletebudget(documentId);
-                                      _fetchData();
-                                      // Handle delete action
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                            subtitle: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    LinearPercentIndicator(
-                                      width: 100,
-                                      barRadius: Radius.circular(5),
-                                      lineHeight: 10,
-                                      animation: true,
-                                      animationDuration: 1000,
-                                      percent: percent > 1.0 ? 1.0 : percent,
-                                      progressColor: color,
-                                    ),
-                                    Text((percent * 100).toStringAsFixed(2) +
-                                        "%"),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(amount.toString()),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                    onSelected: (value) {
+                                      if (value == "edit") {
+                                        // Handle edit action
+                                      } else if (value == "delete") {
+                                        _dbservice.deletebudget(documentId);
+                                        _fetchData();
+                                        // Handle delete action
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              subtitle: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      LinearPercentIndicator(
+                                        width: 100,
+                                        barRadius: Radius.circular(5),
+                                        lineHeight: 10,
+                                        animation: true,
+                                        animationDuration: 1000,
+                                        percent: percent > 1.0 ? 1.0 : percent,
+                                        progressColor: color,
+                                      ),
+                                      Text((percent * 100).toStringAsFixed(2) +
+                                          "%"),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(amount.toString()),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

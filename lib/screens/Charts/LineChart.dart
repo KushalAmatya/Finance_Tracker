@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_tracker/screens/Charts/Indicator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -111,7 +109,7 @@ class _LinechartState extends State<Linechart> {
                             strokeWidth: 0.5,
                           );
                         }),
-                    titlesData: FlTitlesData(show: false),
+                    titlesData: FlTitlesData(show: true),
                     borderData: FlBorderData(
                       show: true,
                       border: Border.all(color: Colors.white, width: 0.5),

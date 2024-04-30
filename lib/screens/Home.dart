@@ -319,8 +319,14 @@ class _HomeState extends State<Home> {
                             TextButton.icon(
                               icon: RotatedBox(
                                   quarterTurns: 1,
-                                  child: Icon(Icons.more_sharp)),
-                              label: Text('See More.'),
+                                  child: Icon(
+                                    Icons.more_vert,
+                                    color: Colors.black,
+                                  )),
+                              label: Text(
+                                'See More.',
+                                style: TextStyle(color: Colors.black),
+                              ),
                               onPressed: () {
                                 Navigator.push(
                                     context,
@@ -394,7 +400,7 @@ Widget _Header(BuildContext context, int totalIncome, int totalExpense) {
             width: double.infinity,
             height: 240,
             decoration: BoxDecoration(
-                color: Color.fromRGBO(215, 178, 157, 1),
+                color: Color.fromARGB(255, 38, 99, 97),
                 borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20))),
@@ -405,38 +411,45 @@ Widget _Header(BuildContext context, int totalIncome, int totalExpense) {
                   left: 350,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(7),
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      color: Color.fromRGBO(250, 250, 250, 0.1),
-                      child: Icon(
-                        Icons.notification_add_outlined,
-                        size: 25,
-                        color: Colors.white,
-                      ),
-                    ),
+                    // child: Container(
+                    //   height: 40,
+                    //   width: 40,
+                    //   color: Color.fromRGBO(250, 250, 250, 0.1),
+                    //   child: Icon(
+                    //     Icons.notification_add_outlined,
+                    //     size: 25,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 35, left: 10),
-                  child: Column(
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(
+                        width: 5,
+                      ),
                       Text(
                         "Welcome",
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Text(
-                        FirebaseAuth.instance.currentUser!.displayName ??
+                        (FirebaseAuth.instance.currentUser!.displayName)!
+                                .toUpperCase() ??
                             "User",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 30,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                     ],
